@@ -1,2 +1,2 @@
 # Keep the large training database dump local; this repository has Git LFS disabled.
-/dlf-postgres/data/dump-stackoverflow2010-202408101013.sql
+/postgres-image/data/dump-stackoverflow2010-202408101013.sql

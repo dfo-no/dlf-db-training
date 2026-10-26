@@ -1,0 +1,8 @@
+# Only send files needed to build the portable database image.
+*
+!Dockerfile
+!postgresql.conf
+!docker-entrypoint-initdb.d/
+!docker-entrypoint-initdb.d/**
+!data/
+!data/dump-stackoverflow2010-202408101013.sql

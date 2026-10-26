@@ -1,0 +1,18 @@
+services:
+  postgres:
+    build:
+      context: ./postgres-image
+    image: ${POSTGRES_IMAGE:-dlf-training-stackoverflow2010:latest}
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      # The initialization scripts create stackoverflow2010 separately.
+      POSTGRES_DB: postgres
+      POSTGRES_RESTORE_JOBS: ${POSTGRES_RESTORE_JOBS:-4}
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql
+
+volumes:
+  postgres-data:
