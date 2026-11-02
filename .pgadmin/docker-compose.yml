@@ -1,0 +1,25 @@
+services:
+  pgadmin:
+    image: dpage/pgadmin4:9.17
+    container_name: pgAdminStack
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${PGADMIN_PORT:-16081}:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pgadmin@dfo.no
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-pgadmin}
+      PGADMIN_REPLACE_SERVERS_ON_STARTUP: "True"
+      PGADMIN_SERVER_JSON_FILE: /var/lib/pgadmin/servers.json
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+      - ./servers.json:/pgadmin4/servers.template.json:ro
+      - ./configure.py:/pgadmin4/configure.py:ro
+    entrypoint:
+      - /bin/sh
+      - -c
+      - /venv/bin/python3 /pgadmin4/configure.py && exec /entrypoint.sh
+
+volumes:
+  pgadmin-data:

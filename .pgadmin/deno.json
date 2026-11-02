@@ -1,0 +1,8 @@
+{
+  "tasks": {
+    "import-macros": "deno run --allow-read=. --allow-run=docker import-macros.ts",
+    "generate-macros": "deno run --allow-read=. --allow-write=macros --allow-run=docker generate-macros.ts",
+    "check": "deno check import-macros.ts generate-macros.ts",
+    "lint": "deno lint import-macros.ts generate-macros.ts"
+  }
+}

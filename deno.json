@@ -1,0 +1,7 @@
+{
+  "tasks": {
+    "docker_up": "az acr login --name dlfdevacr && docker compose up --build --watch",
+    "check": "deno task --cwd services/backend check && npm --prefix services/frontend run check",
+    "lint": "deno task --cwd services/backend lint"
+  }
+}

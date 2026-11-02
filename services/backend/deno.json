@@ -1,0 +1,14 @@
+{
+  "nodeModulesDir": "none",
+  "imports": {
+    "express": "npm:express@5.2.1",
+    "pg": "npm:pg@8.17.1",
+    "winston": "npm:winston@3.19.0",
+    "core/log": "./src/core/log/log.ts"
+  },
+  "tasks": {
+    "start": "deno run --allow-net --allow-env --allow-read --allow-sys --allow-write=logs src/main.ts",
+    "check": "deno check src/main.ts",
+    "lint": "deno lint src"
+  }
+}

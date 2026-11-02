@@ -1,2 +1,7 @@
 # Keep the large training database dump local; this repository has Git LFS disabled.
 /postgres-image/data/dump-stackoverflow2010-202408101013.sql
+.env
+node_modules/
+dist/
+.tanstack/
+/services/backend/logs/

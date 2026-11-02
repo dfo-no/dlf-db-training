@@ -1,8 +1,70 @@
+include:
+  - ./.pgadmin/docker-compose.yml
+
 services:
+  frontend:
+    build: ./services/frontend
+    ports:
+      - "127.0.0.1:${FRONTEND_PORT:-3000}:3000"
+    environment:
+      BACKEND_URL: http://backend:5001
+    depends_on:
+      - backend
+    develop:
+      watch:
+        - action: sync
+          path: ./services/frontend/src
+          target: /app/src
+          initial_sync: true
+          ignore:
+            - routeTree.gen.ts
+        - action: sync+restart
+          path: ./services/frontend/vite.config.ts
+          target: /app/vite.config.ts
+        - action: sync+restart
+          path: ./services/frontend/tsconfig.json
+          target: /app/tsconfig.json
+        - action: rebuild
+          path: ./services/frontend/package.json
+        - action: rebuild
+          path: ./services/frontend/package-lock.json
+        - action: rebuild
+          path: ./services/frontend/Dockerfile
+
+  backend:
+    build: ./services/backend
+    ports:
+      - "127.0.0.1:${BACKEND_PORT:-5001}:5001"
+    environment:
+      DB_PSQL_HOST: postgres
+      DB_PSQL_PORT: 5432
+      DB_PSQL_USER: ${POSTGRES_USER:-postgres}
+      DB_PSQL_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      DB_NAME: stackoverflow2010
+      BACKEND_STDOUT_FORMAT: ${BACKEND_STDOUT_FORMAT:-text}
+      BACKEND_STDOUT_LEVEL: ${BACKEND_STDOUT_LEVEL:-debug}
+      BACKEND_STDOUT_COLORIZE: ${BACKEND_STDOUT_COLORIZE:-true}
+    volumes:
+      - ./services/backend/logs:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./services/backend/src
+          target: /app/src
+          initial_sync: true
+        - action: rebuild
+          path: ./services/backend/deno.json
+        - action: rebuild
+          path: ./services/backend/deno.lock
+        - action: rebuild
+          path: ./services/backend/Dockerfile
+
   postgres:
-    build:
-      context: ./postgres-image
-    image: ${POSTGRES_IMAGE:-dlf-training-stackoverflow2010:latest}
+    image: ${POSTGRES_IMAGE:-dlfdevacr.azurecr.io/dlf-training-stackoverflow2010:latest}
+    pull_policy: always
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
