@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "dompurify": "^3.4.17",
+    "ejs": "^7.0.2",
+    "html-react-parser": "^6.1.9"
+  }
+}

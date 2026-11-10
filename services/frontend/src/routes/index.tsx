@@ -1,16 +1,18 @@
-import {
-  createFileRoute,
-  type ErrorComponentProps,
-} from "@tanstack/react-router";
+import { createFileRoute, type ErrorComponentProps} from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { useEffect } from "react";
 
-type User = {
-  id: number;
-  displayName: string | null;
-  reputation: number | null;
-  location: string | null;
-};
+
+// types
+import type {User} from "../types/profile.ts"
+
+
+
+export const Route = createFileRoute("/")({
+  loader: () => getTopUsers(),
+  component: UsersPage,
+  errorComponent: UsersError,
+});
 
 const getTopUsers = createServerFn({ method: "GET" }).handler(
   async (): Promise<User[]> => {
@@ -25,12 +27,6 @@ const getTopUsers = createServerFn({ method: "GET" }).handler(
     return response.json();
   },
 );
-
-export const Route = createFileRoute("/")({
-  loader: () => getTopUsers(),
-  component: UsersPage,
-  errorComponent: UsersError,
-});
 
 function UsersError({ error }: ErrorComponentProps) {
   useEffect(() => {

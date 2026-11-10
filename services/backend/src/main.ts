@@ -2,11 +2,15 @@
 import express from "express";
 import { log } from "core/log";
 import { db } from "./db.ts";
-import { getTopUsers } from "./routes/users.ts";
+import { answersInfo, badgesInfo, questionsInfo, tagsInfo, userInfo } from "./routes/porfile_info.ts";
 
 const app = express();
 app.use(express.json());
-app.get("/users", getTopUsers);
+app.get("/user", userInfo);
+app.get("/questions", questionsInfo);
+app.get("/answers", answersInfo);
+app.get("/tags", tagsInfo);
+app.get("/badges", badgesInfo);
 
 const port = Number(Deno.env.get("BACKEND_PORT") ?? "5001");
 const server = app.listen(port, "0.0.0.0", () => {
@@ -24,3 +28,5 @@ Deno.addSignalListener("SIGINT", shutdown);
 if (Deno.build.os !== "windows") {
   Deno.addSignalListener("SIGTERM", shutdown);
 }
+
+
