@@ -5,9 +5,11 @@ import { log } from "core/log";
 
 //user section
 export async function userInfo(_req: Request, res: Response) {
+	const id = _req.params.id
+
 	try {
 		const { rows } = await db.query(`
-			SELECT reputation, views, displayname AS "displayName", creationdate AS "creationDate", lastaccessdate AS "lastAccessDate", websiteurl AS "websiteUrl", location, aboutme AS "aboutMe", upvotes AS "upVotes", downvotes AS "downVotes", q_count.questions AS "questionsTotal", q_count.answers AS "answersTotal"
+			SELECT id, reputation, views, displayname AS "displayName", creationdate AS "creationDate", lastaccessdate AS "lastAccessDate", websiteurl AS "websiteUrl", location, aboutme AS "aboutMe", upvotes AS "upVotes", downvotes AS "downVotes", q_count.questions AS "questionsTotal", q_count.answers AS "answersTotal"
 				FROM users as u
 				LEFT JOIN LATERAL(
 					SELECT
@@ -15,12 +17,12 @@ export async function userInfo(_req: Request, res: Response) {
 						COUNT (CASE WHEN p.posttypeid = 2 THEN 1 END) AS answers
 						FROM posts AS p
 							WHERE 1=1
-								AND owneruserid = 26837
+								AND p.owneruserid = u.id
 				) AS q_count
 					ON 1=1
 				WHERE 1=1
-					AND id = 26837
-		`);
+					AND u.id = $1
+		`, [id]);
 		res.json(rows[0]);
 	} catch (error) {
 		log.error("SQL error in GET /users", { error });
@@ -32,6 +34,8 @@ export async function userInfo(_req: Request, res: Response) {
 
 //question section
 export async function questionsInfo(_req: Request, res: Response) {
+	const id = _req.params.id
+
 	try {
 		const { rows } = await db.query(`
 			SELECT v_count.votes, p.answercount AS "answerCount", p.viewcount AS "viewCount", p.title, p.tags, p.lastactivitydate AS "lastActivityDate"
@@ -44,9 +48,9 @@ export async function questionsInfo(_req: Request, res: Response) {
 				) AS v_count
 					ON 1 = 1
 				WHERE 1 = 1
-					AND p.owneruserid = 26837
+					AND p.owneruserid = $1
 					AND p.posttypeid = 1  
-		`);
+		`, [id]);
 		res.json(rows);
 	} catch (error) {
 		log.error("SQL error in GET /users", { error });
@@ -58,9 +62,11 @@ export async function questionsInfo(_req: Request, res: Response) {
 
 //answers section
 export async function answersInfo(_req: Request, res: Response) {
+	const id = _req.params.id
+
 	try {
 		const { rows } = await db.query(`
-			SELECT v_count.votes, p2.title
+			SELECT p.parentid, v_count.votes, p2.title
 				FROM posts AS p
 				INNER JOIN posts AS p2
 					ON p2.id = p.parentid
@@ -72,11 +78,11 @@ export async function answersInfo(_req: Request, res: Response) {
 				) AS v_count
 					ON 1 = 1
 				WHERE 1=1
-					AND p.owneruserid = 26837
+					AND p.owneruserid = $1
 					AND p.posttypeid = 2
 				ORDER BY p2.id
 				LIMIT 30
-		`);
+		`, [id]);
 		res.json(rows);
 	} catch (error) {
 		log.error("SQL error in GET /users", { error });
@@ -88,6 +94,8 @@ export async function answersInfo(_req: Request, res: Response) {
 
 //tags section
 export async function tagsInfo(_req: Request, res: Response) {
+	const id = _req.params.id
+
 	try {
 		const { rows } = await db.query(`
 			SELECT
@@ -100,8 +108,8 @@ export async function tagsInfo(_req: Request, res: Response) {
 				LEFT JOIN posts AS p2
 					ON p2.id = p.parentid
 				WHERE 1=1
-					AND p.owneruserid = 26837   
-		`);
+					AND p.owneruserid = $1  
+		`, [id]);
 		res.json(rows);
 	} catch (error) {
 		log.error("SQL error in GET /users", { error });
@@ -113,14 +121,16 @@ export async function tagsInfo(_req: Request, res: Response) {
 
 //badges section
 export async function badgesInfo(_req: Request, res: Response) {
+	const id = _req.params.id
+
 	try {
 		const { rows } = await db.query(`
 			SELECT b.name, b.class, COUNT(*) AS count
 				FROM badges AS b
-				WHERE b.userid = 26837
+				WHERE b.userid = $1
 				GROUP BY b.name, b.class
 				ORDER BY count DESC
-		`);
+		`, [id]);
 		res.json(rows);
 	} catch (error) {
 		log.error("SQL error in GET /users", { error });

@@ -4,23 +4,23 @@ import { createServerFn } from "@tanstack/react-start";
 //types
 import type { Profile, User, Questions, Answers, Tags, Badges } from '../../../types/profile';
 
-export const getUserProfileInfo = createServerFn({ method: "GET" }).handler(
-    async (): Promise<Profile> => {
+export const getUserProfileInfo = createServerFn({ method: "GET" }).validator((id: string) => id).handler(
+    async (params): Promise<Profile> => {
         const backendUrl = process.env.BACKEND_URL ?? "http://localhost:5001";
 
-        const userInfo = fetch(`${backendUrl}/user`, {
+        const userInfo = fetch(`${backendUrl}/user/${params.data}`, {
             signal: AbortSignal.timeout(10000),
         });
-        const questionsInfo = fetch(`${backendUrl}/questions`, {
+        const questionsInfo = fetch(`${backendUrl}/questions/${params.data}`, {
             signal: AbortSignal.timeout(10000),
         });
-        const answersInfo = fetch(`${backendUrl}/answers`, {
+        const answersInfo = fetch(`${backendUrl}/answers/${params.data}`, {
             signal: AbortSignal.timeout(10000),
         });
-        const tagsInfo = fetch(`${backendUrl}/tags`, {
+        const tagsInfo = fetch(`${backendUrl}/tags/${params.data}`, {
             signal: AbortSignal.timeout(10000),
         });
-        const badgesInfo = fetch(`${backendUrl}/badges`, {
+        const badgesInfo = fetch(`${backendUrl}/badges/${params.data}`, {
             signal: AbortSignal.timeout(10000),
         });
 

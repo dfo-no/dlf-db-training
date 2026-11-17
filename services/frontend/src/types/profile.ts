@@ -23,6 +23,7 @@ export type Questions = {
 };
 
 export type Answers = {
+    parentid: number | null;
     votes: number | null;
     title: string | null;
 };

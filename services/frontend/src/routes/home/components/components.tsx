@@ -1,6 +1,6 @@
 import { Fragment, useEffect } from "react";
 import type {ErrorComponentProps} from "@tanstack/react-router";
-import { Route } from "../index.tsx"
+import { Route } from "../$id.tsx"
 import DOMPurify from "dompurify";
 import parse from "html-react-parser";
 import { Profile } from "../../../types/profile.ts";
@@ -198,7 +198,7 @@ export function UsersPage() {
                         {profile.answers.map((answer) => (
                             <div id="answer" className="flex ">
                                 <span className="bg-[#75845c] text-[#E1E818]">{answer.votes}</span>
-                                <a href="" className="text-[#555555]"><b>{answer.title}</b></a>
+                                <a href={'/questions/' + JSON.stringify(answer.parentid)} className="text-[#555555]"><b>{answer.title}</b></a>
                             </div>
                         ))}
                         <div id="page-selection">
